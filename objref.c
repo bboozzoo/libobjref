@@ -1,4 +1,6 @@
+#include <stddef.h>
 #include <stdint.h>
+#include <stdlib.h>
 #include <objref.h>
 
 struct objref_meta_s
@@ -38,12 +40,15 @@ objref_alloc(size_t size, objref_destructor_f des)
     struct objref_meta_s *meta = NULL;
     void *obj = NULL;
 
+    if (!size)
+        return obj;
+
     meta = __objref_alloc(size + sizeof(struct objref_meta_s));
     if (meta)
     {
         meta->refcnt = 1;
         meta->size = size;
-        meta->desctructor = des;
+        meta->destructor = des;
         obj = __objref_get_obj(meta);
     }
 
@@ -54,6 +59,9 @@ void *
 objref(void *obj)
 {
     struct objref_meta_s *meta;
+
+    if (!obj)
+        return NULL;
 
     meta = __objref_get_meta(obj);
 
@@ -67,6 +75,9 @@ objunref(void *obj)
 {
     struct objref_meta_s *meta;
 
+    if (!obj)
+        return NULL;
+
     meta = __objref_get_meta(obj);
 
     if (meta->refcnt > 0)
@@ -75,7 +86,7 @@ objunref(void *obj)
         meta->refcnt--;
         if (meta->refcnt == 0)
         {
-            if (meta->desctructor)
+            if (meta->destructor)
                 meta->destructor(obj);
 
             __objref_free(meta);
@@ -92,6 +103,9 @@ uint32_t
 objref_refcnt(void *obj)
 {
     struct objref_meta_s *meta;
+
+    if (!obj)
+        return 0;
 
     meta = __objref_get_meta(obj);
 

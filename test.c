@@ -37,7 +37,7 @@ int main(void)
 
     /* ref == 1 after alloc */
     __x->y_obj = objref_alloc(sizeof(struct y_s), __y_s_destructor);
-    printf("allocated y_s, refcnt: %u\n", objref_refcnt(__y));
+    printf("allocated y_s, refcnt: %u\n", objref_refcnt(__x->y_obj));
 
     /* ref + 1 */
     __y = objref(__x->y_obj);
