@@ -1,0 +1,18 @@
+
+* TODO:
+  - memory posioning on free
+  - trace caller on allocation
+  - handling of incorrect refcounts (ex. unref of obj with refcnt == 0)
+
+* USAGE:
+  Basic assumptions:
+  - newly allocated object has reference count of 1
+  - reference count 0 indicates an unused object which will be freed
+
+  Allocate a new object by calling objref_alloc with objects's size,
+  identically to malloc. The destructor function will be called when
+  the reference count drops to 0. The destructor function gets a
+  pointer to the object.
+  References are obtained with objref and released with objunref.
+
+    
